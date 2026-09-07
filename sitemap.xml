@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://morrowlogic.com/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://morrowlogic.com/?lang=zh-CN"/>
+    <xhtml:link rel="alternate" hreflang="en"    href="https://morrowlogic.com/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ja"    href="https://morrowlogic.com/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://morrowlogic.com/?lang=zh-TW"/>
+    <xhtml:link rel="alternate" hreflang="es"    href="https://morrowlogic.com/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="de"    href="https://morrowlogic.com/?lang=de"/>
+  </url>
+  <url>
+    <loc>https://morrowlogic.com/pages/privacy.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>

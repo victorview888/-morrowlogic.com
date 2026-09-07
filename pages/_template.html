@@ -1,0 +1,96 @@
+<!--
+  Morrow Logic · 子页模板 (Single-file SPA extension)
+  用法：
+    1) 复制此文件到 pages/<name>.html
+    2) 把下面 #INCLUDE-HEAD 与 #INCLUDE-FOOT 的占位用同站点 CSS/JS 替换：
+       (实际复制时请把以下两段引入粘到对应位置)
+         <link rel="stylesheet" href="../assets/css/base.css" />
+         <link rel="stylesheet" href="../assets/css/components.css" />
+         <link rel="stylesheet" href="../assets/css/sections.css" />
+         <script src="../assets/js/i18n.js" defer></script>
+         <script src="../assets/js/locales/zh-CN.js" defer></script>
+         <script src="../assets/js/main.js" defer></script>
+    3) 整页共享 nav / footer，与首页一致
+    4) body 内把 <main> 区块替换为子页内容，data-i18n key 复用同一套语言包
+-->
+<!doctype html>
+<html lang="zh-CN" data-locale="zh-CN" data-preload>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#0a1024" />
+<title data-i18n="meta.title">明日逻辑 · Morrow Logic</title>
+<meta name="description" data-i18n="meta.description" content="明日逻辑（Morrow Logic）专注计算机软件开发、系统集成与数据处理服务。" />
+<link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg" />
+<link rel="canonical" href="https://morrowlogic.com/" />
+<!-- #INCLUDE-HEAD -->
+<script>document.documentElement.classList.add('i18n-loading');</script>
+</head>
+<body>
+
+<a href="#main" class="skip-link" data-i18n="a11y.skip">跳转到主内容</a>
+
+<header class="nav" id="nav">
+  <div class="container nav__inner">
+    <a href="../index.html" class="nav__brand">
+      <img src="../assets/img/logo-mark.svg" alt="" width="36" height="36" />
+      <span class="nav__brand-text">
+        <strong>Morrow Logic</strong>
+        <small data-i18n="brand.tagline">明日逻辑</small>
+      </span>
+    </a>
+    <nav class="nav__menu">
+      <a href="../index.html#services" data-i18n="nav.services">核心业务</a>
+      <a href="../index.html#capabilities" data-i18n="nav.capabilities">服务能力</a>
+      <a href="../index.html#solutions" data-i18n="nav.solutions">行业方案</a>
+      <a href="../index.html#cases" data-i18n="nav.cases">客户案例</a>
+      <a href="../index.html#about" data-i18n="nav.about">关于我们</a>
+      <a href="../index.html#contact" data-i18n="nav.cta">联系</a>
+    </nav>
+    <div class="nav__tools">
+      <div class="lang" data-lang>
+        <button type="button" class="lang__btn" aria-haspopup="listbox" aria-expanded="false" data-lang-btn>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+          <span data-lang-current>简体中文</span>
+        </button>
+        <ul class="lang__list" role="listbox" data-lang-list>
+          <li role="option" data-lang-option="zh-CN" tabindex="0">简体中文</li>
+          <li role="option" data-lang-option="en" tabindex="0">English</li>
+          <li role="option" data-lang-option="ja" tabindex="0">日本語</li>
+          <li role="option" data-lang-option="zh-TW" tabindex="0">繁體中文</li>
+          <li role="option" data-lang-option="es" tabindex="0">Español</li>
+          <li role="option" data-lang-option="de" tabindex="0">Deutsch</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="section">
+  <div class="container">
+    <header class="section__head">
+      <span class="eyebrow">Legal</span>
+      <h1 class="section__title">隐私政策</h1>
+      <p class="section__lead">最后更新：2026-01-01</p>
+    </header>
+
+    <article class="prose">
+      <p>本页面为子页模板示例。请将 <code>&lt;main&gt;</code> 内容替换为子页正文。</p>
+      <h3>1. 信息收集</h3>
+      <p>……</p>
+      <h3>2. 信息使用</h3>
+      <p>……</p>
+    </article>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container footer__bottom">
+    <span data-i18n="footer.copy">© 2026 Morrow Logic. 保留所有权利。</span>
+    <a href="../index.html" data-i18n="nav.services">返回首页</a>
+  </div>
+</footer>
+
+<!-- #INCLUDE-FOOT -->
+</body>
+</html>

@@ -27,18 +27,37 @@
   var dict = global.__I18N__ = global.__I18N__ || {};
   var current = DEFAULT_LOCALE;
 
+  // 路径 ↔ 语言映射：默认 zh-CN 走根路径，其他语言走 /xx/
+  function pathFor(locale) {
+    if (locale === DEFAULT_LOCALE) return '/';
+    return '/' + locale + '/';
+  }
+  function localeFromPath(p) {
+    var m = (p || '').match(/^\/(zh-CN|en|ja|zh-TW|es|de)\/?$/);
+    return m ? m[1] : '';
+  }
+  // 去除已有语言前缀；返回本页面"裸"路径（用于切换语言时复用）
+  function stripLangPrefix(p) {
+    var stripped = (p || '').replace(/^\/(zh-CN|en|ja|zh-TW|es|de)(?=\/|$)/, '');
+    return stripped || '/';
+  }
+  // 给"裸"路径加语言前缀；默认语言不加
+  function prependLang(basePath, locale) {
+    if (locale === DEFAULT_LOCALE) return basePath;
+    if (basePath === '/') return '/' + locale + '/';
+    return '/' + locale + basePath;
+  }
+
   function detectInitial() {
+    // 1) localStorage 用户偏好
     try {
       var saved = localStorage.getItem(STORAGE_KEY);
       if (saved && SUPPORTED.indexOf(saved) !== -1) return saved;
     } catch (e) {}
-    // ?lang=xx 优先级最高
-    try {
-      var sp = new URLSearchParams(location.search);
-      var q = sp.get('lang');
-      if (q && SUPPORTED.indexOf(q) !== -1) return q;
-    } catch (e) {}
-    // navigator.language
+    // 2) URL 路径前缀（SEO 友好的路径化语言）
+    var fromPath = localeFromPath(location.pathname);
+    if (fromPath) return fromPath;
+    // 3) navigator.language（仅首次访问且无路径时）
     var nav = (navigator.language || navigator.userLanguage || '').toLowerCase();
     if (nav) {
       if (SUPPORTED.indexOf(nav) !== -1) return nav;
@@ -89,13 +108,21 @@
     document.documentElement.setAttribute('lang', current.split('-')[0]);
     document.documentElement.setAttribute('data-locale', current);
 
-    // hreflang 链接带 lang 参数
+    // hreflang 链接：路径化版本（SEO 友好）
     document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(function (lk) {
       var hl = lk.getAttribute('hreflang');
       if (hl === 'x-default') return;
       var code = hl;
       if (SUPPORTED.indexOf(hl) === -1) return;
-      lk.setAttribute('href', location.origin + location.pathname + '?lang=' + code);
+      lk.setAttribute('href', location.origin + pathFor(code));
+    });
+
+    // canonical 跟随当前语言（从 data-canonical-base 读取本页面基础路径）
+    document.querySelectorAll('link[rel="canonical"]').forEach(function (lk) {
+      var relBase = lk.getAttribute('data-canonical-base');
+      if (!relBase) return;
+      var langPrefix = (current === DEFAULT_LOCALE) ? '' : '/' + current;
+      lk.setAttribute('href', location.origin + langPrefix + relBase);
     });
 
     // 语言切换按钮的当前显示
@@ -123,13 +150,16 @@
     try { localStorage.setItem(STORAGE_KEY, locale); } catch (e) {}
     var promise = dict[locale] ? Promise.resolve(dict[locale]) : loadScript(locale);
     return promise.then(apply).then(function () {
-      // 同步 URL ?lang=
+      // 同步 URL 路径（路径化语言）
       try {
-        var url = new URL(location.href);
         if (opts.fromUser !== false) {
-          if (url.searchParams.get('lang') !== locale) {
-            url.searchParams.set('lang', locale);
-            history.replaceState(null, '', url.toString());
+          // 用 canonical-base 推断本页面基础路径，避免剥离错误
+          var baseAttr = document.querySelector('link[rel="canonical"]');
+          var canonicalBase = baseAttr && baseAttr.getAttribute('data-canonical-base');
+          var basePath = canonicalBase || stripLangPrefix(location.pathname) || '/';
+          var newPath = prependLang(basePath, locale);
+          if (newPath !== location.pathname) {
+            history.pushState({ locale: locale }, '', newPath + location.search + location.hash);
           }
         }
       } catch (e) {}
@@ -192,6 +222,16 @@
     bindUI();
     var initial = detectInitial();
     setLocale(initial, { fromUser: false });
+
+    // 处理浏览器前进/后退：URL 路径变化时同步语言
+    window.addEventListener('popstate', function () {
+      var loc = localeFromPath(location.pathname);
+      if (loc && loc !== current) {
+        setLocale(loc, { fromUser: false });
+      } else if (!loc && current !== DEFAULT_LOCALE) {
+        setLocale(DEFAULT_LOCALE, { fromUser: false });
+      }
+    });
   });
 
   global.I18N = { setLocale: setLocale, getLocale: getLocale, t: t };

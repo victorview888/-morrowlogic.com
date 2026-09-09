@@ -148,48 +148,21 @@ export const onRequest = async (context) => {
       }
     });
 
-  const transformed = rewriter.transform(response);
+  // 用字符串方式处理 HTML(对几十 KB 文档性能足够,且避免流式复杂度)
+  const originalHtml = await response.text();
+  const wrapped = rewriter.transform(new Response(originalHtml, response));
+  const newHtml = await wrapped.text();
 
   // 注入服务端已渲染的语言包 + 当前 locale,避免客户端重复请求
   const injection = '<script>(function(){try{var L=' + JSON.stringify(locale) + ';var M=' + JSON.stringify(messages) + ';window.__I18N__=window.__I18N__||{};window.__I18N__[L]=M;window.__SSR_LOCALE__=L;}catch(e){}})();</script>';
+  const finalHtml = newHtml.includes('</head>')
+    ? newHtml.replace('</head>', injection + '</head>')
+    : (injection + newHtml);
 
-  const headers = new Headers(transformed.headers);
-  // 确保 HTML 文档类型,避免 MIME 不匹配
+  const headers = new Headers(response.headers);
   if (!headers.has('content-type')) headers.set('content-type', 'text/html; charset=utf-8');
 
-  // 用 transformStream 在 body 末尾注入
-  const body = transformed.body;
-  const encoder = new TextEncoder();
-  const stream = new ReadableStream({
-    async start(controller) {
-      const reader = body.getReader();
-      let injected = false;
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        // 找到 </head> 关闭标签前注入
-        if (!injected) {
-          const text = new TextDecoder().decode(value);
-          const idx = text.indexOf('</head>');
-          if (idx !== -1) {
-            const before = text.slice(0, idx);
-            const after = text.slice(idx);
-            controller.enqueue(encoder.encode(before + injection + after));
-            injected = true;
-          } else {
-            controller.enqueue(value);
-          }
-        } else {
-          controller.enqueue(value);
-        }
-      }
-      // 如果流结束还没找到 </head>,末尾注入
-      if (!injected) controller.enqueue(encoder.encode(injection));
-      controller.close();
-    }
-  });
-
-  return new Response(stream, { status: transformed.status, headers });
+  return new Response(finalHtml, { status: response.status, headers });
 };
 `;
 

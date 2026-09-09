@@ -10,6 +10,7 @@
   'use strict';
 
   var STORAGE_KEY = 'ml_lang';
+  var COOKIE_KEY = 'ml_lang';
   var DEFAULT_LOCALE = 'zh-CN';
 
   var SUPPORTED = ['zh-CN', 'en', 'ja', 'zh-TW', 'es', 'de'];
@@ -53,6 +54,11 @@
     try {
       var saved = localStorage.getItem(STORAGE_KEY);
       if (saved && SUPPORTED.indexOf(saved) !== -1) return saved;
+    } catch (e) {}
+    // 1b) cookie 偏好（与 localStorage 同步，供 Cloudflare Pages Function 服务端读取）
+    try {
+      var ck = (document.cookie || '').match(new RegExp('(?:^|;\\s*)' + COOKIE_KEY + '=([^;]+)'));
+      if (ck && SUPPORTED.indexOf(ck[1]) !== -1) return ck[1];
     } catch (e) {}
     // 2) URL 路径前缀（SEO 友好的路径化语言）
     var fromPath = localeFromPath(location.pathname);
@@ -148,6 +154,10 @@
     if (SUPPORTED.indexOf(locale) === -1) locale = DEFAULT_LOCALE;
     current = locale;
     try { localStorage.setItem(STORAGE_KEY, locale); } catch (e) {}
+    // 同步 cookie，让 Cloudflare Pages Function 在下次请求服务端读到
+    try {
+      document.cookie = COOKIE_KEY + '=' + locale + '; path=/; max-age=' + (60 * 60 * 24 * 365) + '; SameSite=Lax';
+    } catch (e) {}
     var promise = dict[locale] ? Promise.resolve(dict[locale]) : loadScript(locale);
     return promise.then(apply).then(function () {
       // 同步 URL 路径（路径化语言）

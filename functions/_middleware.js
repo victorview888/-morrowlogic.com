@@ -46,15 +46,13 @@ function stripLangPrefix(p) {
 
 export const onRequest = async (context) => {
   const { request, env } = context;
-  const locale = pickLocale(request);
-  const messages = LOCALES[locale];
   const url = new URL(request.url);
 
-  // 自己走静态资源(因为 _redirects 已删除,Function 必须接管路径路由)
-  // /en/ -> /, /en/pages/privacy.html -> /pages/privacy.html
-  const assetPath = stripLangPrefix(url.pathname) + url.search;
-  const assetRequest = new Request(new URL(assetPath, request.url), request);
-  let response = await env.ASSETS.fetch(assetRequest);
+  // DEBUG: 简单返回验证 Function 是否被调用
+  return new Response('DEBUG function called: ' + request.url, {
+    status: 200,
+    headers: { 'content-type': 'text/plain' }
+  });
 
   // 静态资源非 HTML(如 /assets/*)直接返回,不替换
   const ct = response.headers.get('content-type') || '';

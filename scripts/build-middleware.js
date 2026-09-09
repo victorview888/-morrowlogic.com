@@ -136,9 +136,7 @@ export const onRequest = async (context) => {
   const transformed = rewriter.transform(response);
 
   // 注入服务端已渲染的语言包 + 当前 locale,避免客户端重复请求
-  const injection = \`
-<script>(function(){try{var L=\\\${JSON.stringify(locale)};var M=\\\${JSON.stringify(messages)};window.__I18N__=window.__I18N__||{};window.__I18N__[L]=M;window.__SSR_LOCALE__=L;}catch(e){}})();</script>
-\`;
+  const injection = '<script>(function(){try{var L=' + JSON.stringify(locale) + ';var M=' + JSON.stringify(messages) + ';window.__I18N__=window.__I18N__||{};window.__I18N__[L]=M;window.__SSR_LOCALE__=L;}catch(e){}})();</script>';
 
   const headers = new Headers(transformed.headers);
   // 确保 HTML 文档类型,避免 MIME 不匹配

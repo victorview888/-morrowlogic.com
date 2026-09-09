@@ -38,14 +38,29 @@ function pickLocale(request) {
   return DEFAULT_LOCALE;
 }
 
-export const onRequest = async (context) => {
-  const locale = pickLocale(context.request);
-  const messages = LOCALES[locale];
-  if (!messages) return context.next();
+// 从 /en/foo 之类的路径剥离语言前缀,得到真正的静态资源路径
+function stripLangPrefix(p) {
+  const stripped = (p || '').replace(/^\/(zh-CN|en|ja|zh-TW|es|de)(?=\/|$)/, '');
+  return stripped || '/';
+}
 
-  const response = await context.next();
+export const onRequest = async (context) => {
+  const { request, env } = context;
+  const locale = pickLocale(request);
+  const messages = LOCALES[locale];
+  const url = new URL(request.url);
+
+  // 自己走静态资源(因为 _redirects 已删除,Function 必须接管路径路由)
+  // /en/ -> /, /en/pages/privacy.html -> /pages/privacy.html
+  const assetPath = stripLangPrefix(url.pathname) + url.search;
+  const assetRequest = new Request(new URL(assetPath, request.url), request);
+  let response = await env.ASSETS.fetch(assetRequest);
+
+  // 静态资源非 HTML(如 /assets/*)直接返回,不替换
   const ct = response.headers.get('content-type') || '';
   if (!ct.includes('text/html')) return response;
+
+  if (!messages) return response;
 
   // 用 HTMLRewriter 流式替换关键节点
   const rewriter = new HTMLRewriter()

@@ -1,0 +1,24 @@
+{
+  "name": "morrowlogic.com",
+  "version": "1.0.0",
+  "description": "纯静态、零依赖、6 国语言、形象专业型品牌官网。围绕“计算机软件开发 / 系统集成 / 数据处理服务”三大业务展开。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/victorview888/-morrowlogic.com.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/victorview888/-morrowlogic.com/issues"
+  },
+  "homepage": "https://github.com/victorview888/-morrowlogic.com#readme",
+  "dependencies": {
+    "sharp": "^0.35.4"
+  }
+}

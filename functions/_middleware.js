@@ -45,107 +45,71 @@ function stripLangPrefix(p) {
 }
 
 export const onRequest = async (context) => {
-  const { request, env } = context;
+  const { request, next } = context;
   const url = new URL(request.url);
 
-  // DEBUG: 简单返回验证 Function 是否被调用
-  return new Response('DEBUG function called: ' + request.url, {
-    status: 200,
-    headers: { 'content-type': 'text/plain' }
-  });
+  // 路径重写: /en/ -> /, /en/pages/privacy.html -> /pages/privacy.html
+  // 用 next(newRequest) 走 Pages 静态资源(而非 env.ASSETS),避免自定义域兼容问题
+  const stripped = stripLangPrefix(url.pathname);
+  const newRequest = new Request(new URL(stripped + url.search, request.url), request);
+  const response = await next(newRequest);
 
-  // 静态资源非 HTML(如 /assets/*)直接返回,不替换
+  const locale = pickLocale(request);
+  const messages = LOCALES[locale];
   const ct = response.headers.get('content-type') || '';
-  if (!ct.includes('text/html')) return response;
+  if (!messages || !ct.includes('text/html')) return response;
 
-  if (!messages) return response;
-
-  // 用 HTMLRewriter 流式替换关键节点
+  // 用字符串方式处理 HTML
+  const originalHtml = await response.text();
   const rewriter = new HTMLRewriter()
-    // <html lang="..."> 与 data-locale
     .on('html', {
       element(el) {
         el.setAttribute('lang', locale.split('-')[0]);
         el.setAttribute('data-locale', locale);
-        // 移除 i18n-loading 类:内容已在服务端渲染正确,无需再 hide
         const cls = (el.getAttribute('class') || '').split(/\s+/).filter(Boolean);
         if (cls.indexOf('i18n-loading') !== -1) {
           el.setAttribute('class', cls.filter(c => c !== 'i18n-loading').join(' '));
         }
       }
     })
-    // <title>
     .on('title', {
-      text(t) {
-        if (messages['meta.title']) t.replace(messages['meta.title']);
-      }
+      text(t) { if (messages['meta.title']) t.replace(messages['meta.title']); }
     })
-    // meta description / keywords
     .on('meta[name="description"]', {
-      element(el) {
-        const v = messages['meta.description'];
-        if (v) el.setAttribute('content', v);
-      }
+      element(el) { const v = messages['meta.description']; if (v) el.setAttribute('content', v); }
     })
     .on('meta[name="keywords"]', {
-      element(el) {
-        const v = messages['meta.keywords'];
-        if (v) el.setAttribute('content', v);
-      }
+      element(el) { const v = messages['meta.keywords']; if (v) el.setAttribute('content', v); }
     })
-    // og:title / og:description / og:image:alt
     .on('meta[property="og:title"]', {
-      element(el) {
-        const v = messages['og.title'];
-        if (v) el.setAttribute('content', v);
-      }
+      element(el) { const v = messages['og.title']; if (v) el.setAttribute('content', v); }
     })
     .on('meta[property="og:description"]', {
-      element(el) {
-        const v = messages['og.description'];
-        if (v) el.setAttribute('content', v);
-      }
+      element(el) { const v = messages['og.description']; if (v) el.setAttribute('content', v); }
     })
     .on('meta[property="og:image:alt"]', {
-      element(el) {
-        if (messages['meta.title']) el.setAttribute('content', messages['meta.title']);
-      }
+      element(el) { if (messages['meta.title']) el.setAttribute('content', messages['meta.title']); }
     })
-    // twitter:title / twitter:image:alt
     .on('meta[name="twitter:title"]', {
-      element(el) {
-        const v = messages['twitter.title'];
-        if (v) el.setAttribute('content', v);
-      }
+      element(el) { const v = messages['twitter.title']; if (v) el.setAttribute('content', v); }
     })
     .on('meta[name="twitter:image:alt"]', {
-      element(el) {
-        if (messages['meta.title']) el.setAttribute('content', messages['meta.title']);
-      }
+      element(el) { if (messages['meta.title']) el.setAttribute('content', messages['meta.title']); }
     })
-    // 所有带 data-i18n 的节点:替换文本内容
     .on('[data-i18n]', {
       element(el) {
         const key = el.getAttribute('data-i18n');
         const val = key && messages[key];
         if (val == null) return;
         const attr = el.getAttribute('data-i18n-attr');
-        if (attr) {
-          el.setAttribute(attr, val);
-        } else if (el.hasAttribute('data-i18n-html')) {
-          el.setInnerContent(val, { html: true });
-        } else {
-          el.setInnerContent(val);
-        }
+        if (attr) { el.setAttribute(attr, val); }
+        else if (el.hasAttribute('data-i18n-html')) { el.setInnerContent(val, { html: true }); }
+        else { el.setInnerContent(val); }
       }
     });
 
-  // 用字符串方式处理 HTML(对几十 KB 文档性能足够,且避免流式复杂度)
-  const originalHtml = await response.text();
   const wrapped = rewriter.transform(new Response(originalHtml, response));
   const newHtml = await wrapped.text();
-
-  // 注入服务端已渲染的语言包 + 当前 locale,避免客户端重复请求
   const injection = '<script>(function(){try{var L=' + JSON.stringify(locale) + ';var M=' + JSON.stringify(messages) + ';window.__I18N__=window.__I18N__||{};window.__I18N__[L]=M;window.__SSR_LOCALE__=L;}catch(e){}})();</script>';
   const finalHtml = newHtml.includes('</head>')
     ? newHtml.replace('</head>', injection + '</head>')
@@ -153,6 +117,5 @@ export const onRequest = async (context) => {
 
   const headers = new Headers(response.headers);
   if (!headers.has('content-type')) headers.set('content-type', 'text/html; charset=utf-8');
-
   return new Response(finalHtml, { status: response.status, headers });
 };

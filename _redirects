@@ -1,0 +1,9 @@
+# Cloudflare Pages 路径化多语言路由
+# Pages Function 在自定义域不被调用,改回 _redirects 处理路径
+# Function SSR 方案已撤回,客户端 JS 切换回退(详见 commit)
+
+/en/*          /:splat           200
+/ja/*          /:splat           200
+/zh-TW/*       /:splat           200
+/es/*          /:splat           200
+/de/*          /:splat           200

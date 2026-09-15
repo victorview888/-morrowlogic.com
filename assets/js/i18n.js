@@ -12,14 +12,10 @@
   var STORAGE_KEY = 'ml_lang';
   var DEFAULT_LOCALE = 'zh-CN';
 
-  var SUPPORTED = ['zh-CN', 'en', 'ja', 'zh-TW', 'es', 'de'];
+  var SUPPORTED = ['zh-CN', 'en'];
   var SUPPORTED_NAMES = {
     'zh-CN': '简体中文',
-    'en': 'English',
-    'ja': '日本語',
-    'zh-TW': '繁體中文',
-    'es': 'Español',
-    'de': 'Deutsch'
+    'en': 'English'
   };
   var SCRIPT_BASE = 'assets/js/locales/';
 
@@ -33,12 +29,12 @@
     return '/' + locale + '/';
   }
   function localeFromPath(p) {
-    var m = (p || '').match(/^\/(zh-CN|en|ja|zh-TW|es|de)\/?$/);
+    var m = (p || '').match(/^\/(zh-CN|en)\/?$/);
     return m ? m[1] : '';
   }
   // 去除已有语言前缀；返回本页面"裸"路径（用于切换语言时复用）
   function stripLangPrefix(p) {
-    var stripped = (p || '').replace(/^\/(zh-CN|en|ja|zh-TW|es|de)(?=\/|$)/, '');
+    var stripped = (p || '').replace(/^\/(zh-CN|en)(?=\/|$)/, '');
     return stripped || '/';
   }
   // 给"裸"路径加语言前缀；默认语言不加
@@ -62,12 +58,8 @@
     if (nav) {
       if (SUPPORTED.indexOf(nav) !== -1) return nav;
       var base = nav.split('-')[0];
-      var map = { zh: 'zh-CN', en: 'en', ja: 'ja', es: 'es', de: 'de' };
+      var map = { zh: 'zh-CN', en: 'en' };
       if (map[base]) return map[base];
-      if (base === 'zh') {
-        if (/tw|hk|mo/i.test(nav)) return 'zh-TW';
-        return 'zh-CN';
-      }
     }
     return DEFAULT_LOCALE;
   }
@@ -234,5 +226,5 @@
     });
   });
 
-  global.I18N = { setLocale: setLocale, getLocale: getLocale, t: t };
+  global.I18N = { setLocale: setLocale, getLocale: getLocale, t: t, dict: dict };
 })(window);

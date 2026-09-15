@@ -59,7 +59,7 @@
   to{transform:translate(40px,30px)}
 }
 
-/* ---- STATS ---- */
+/* ---- STATS / VALUE PROPS ---- */
 .stats{padding-block:clamp(48px,6vw,80px);border-block:1px solid var(--line);background:rgba(6,10,24,.4)}
 .stats__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center}
 .stat__num{
@@ -68,6 +68,30 @@
   background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent;
 }
 .stat__label{margin-top:8px;color:var(--text-soft);font-size:.92rem}
+
+/* 能力承诺卡片（替代数字） */
+.stat--prop{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  padding:18px 12px;
+  border-radius:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+  border:1px solid var(--line);
+  transition:transform .25s ease,border-color .25s ease,background .25s ease;
+}
+.stat--prop:hover{
+  transform:translateY(-3px);
+  border-color:rgba(34,227,196,.4);
+  background:linear-gradient(180deg,rgba(34,227,196,.06),rgba(34,227,196,.02));
+}
+.stat__icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;
+  border-radius:50%;
+  background:rgba(34,227,196,.12);
+  color:var(--brand-2);
+}
+.stat__icon svg{width:18px;height:18px}
+.stat--prop .stat__label{margin-top:0;font-size:.95rem;font-weight:600;color:#fff;letter-spacing:.02em}
 
 /* ---- SERVICES ---- */
 .services__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
@@ -150,8 +174,17 @@
     linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
   border:1px solid var(--line);
   transition:transform var(--t-med) var(--ease),border-color var(--t-med) var(--ease);
+  display:block;color:inherit;text-decoration:none;
 }
 .case:hover{transform:translateY(-6px);border-color:rgba(139,92,246,.4)}
+.case__link{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:14px;
+  font-size:.85rem;font-weight:600;
+  color:var(--brand-1);
+  transition:gap .2s ease;
+}
+.case:hover .case__link{gap:10px}
 .case__metric{
   display:flex;align-items:baseline;gap:10px;margin-bottom:14px;
   font-family:var(--font-mono);
@@ -250,21 +283,24 @@
   .stats__grid{grid-template-columns:repeat(2,1fr);gap:24px}
 }
 @media (max-width:720px){
+  .nav__inner{grid-template-columns:auto auto;row-gap:8px}
   .nav__menu{
-    position:fixed;top:64px;left:0;right:0;flex-direction:column;align-items:stretch;
-    padding:16px;gap:4px;
-    background:rgba(6,10,24,.96);backdrop-filter:blur(14px);
+    grid-column:1/-1;
+    background:rgba(6,10,24,.96);
+    backdrop-filter:blur(14px);
     border-bottom:1px solid var(--line);
-    transform:translateY(-110%);transition:transform var(--t-med) var(--ease);
-    max-height:calc(100vh - 64px);overflow:auto;
+    padding:8px 12px;
+    gap:2px;
+    justify-content:space-between;
+    overflow-x:auto;
   }
-  .nav__menu.is-open{transform:none}
-  .nav__menu a{padding:.9em 1em;border-radius:10px;font-size:1rem}
+  .nav__menu a{padding:.55em .7em;border-radius:999px;font-size:.82rem;white-space:nowrap;flex:0 0 auto}
   .nav__menu a.is-active{background:var(--surface-strong)}
   .nav__menu a.is-active::after{display:none}
-  .nav__burger{display:inline-flex}
+  .nav__burger{display:none}
   .nav__tools .btn--primary{display:none}
   .services__grid,.caps__grid,.sols__grid,.cases__grid{grid-template-columns:1fr}
+  .stats__grid{grid-template-columns:repeat(2,1fr)}
   .cred__grid{grid-template-columns:repeat(2,1fr)}
   .proc{grid-template-columns:1fr 1fr}
   .proc__step::after{display:none}
@@ -279,3 +315,31 @@
   .hero__trust{font-size:.8rem;gap:12px}
   .footer__grid{grid-template-columns:1fr}
 }
+
+/* ========== Hero 大标题字体升级（科技感） ========== */
+.hero__title {
+  font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", system-ui, -apple-system, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  font-size: clamp(3rem, 7vw, 5.6rem);
+}
+.hero__title .grad-text {
+  font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", system-ui, -apple-system, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+/* 英文版大标题更醒目 */
+html[data-locale="en"] .hero__title {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  font-size: clamp(2.8rem, 6.5vw, 5.2rem);
+}
+html[data-locale="en"] .hero__title .grad-text {
+  font-family: "Space Grotesk", "JetBrains Mono", monospace;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+

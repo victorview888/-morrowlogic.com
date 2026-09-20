@@ -5,23 +5,23 @@
     <loc>https://morrowlogic.com/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://morrowlogic.com/"/>
-    <xhtml:link rel="alternate" hreflang="en"    href="https://morrowlogic.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="en"    href="https://morrowlogic.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://morrowlogic.com/zh-CN/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://morrowlogic.com/"/>
   </url>
   <url>
-    <loc>https://morrowlogic.com/en/</loc>
+    <loc>https://morrowlogic.com/zh-CN/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://morrowlogic.com/"/>
-    <xhtml:link rel="alternate" hreflang="en"    href="https://morrowlogic.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="en"    href="https://morrowlogic.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://morrowlogic.com/zh-CN/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://morrowlogic.com/"/>
   </url>
   <url>
     <loc>https://morrowlogic.com/pages/privacy.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://morrowlogic.com/pages/privacy.html"/>
-    <xhtml:link rel="alternate" hreflang="en"    href="https://morrowlogic.com/en/pages/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="en"    href="https://morrowlogic.com/pages/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://morrowlogic.com/zh-CN/pages/privacy.html"/>
   </url>
 </urlset>

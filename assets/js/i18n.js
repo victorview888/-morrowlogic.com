@@ -10,7 +10,7 @@
   'use strict';
 
   var STORAGE_KEY = 'ml_lang';
-  var DEFAULT_LOCALE = 'zh-CN';
+  var DEFAULT_LOCALE = 'en';
 
   var SUPPORTED = ['zh-CN', 'en'];
   var SUPPORTED_NAMES = {
@@ -23,7 +23,7 @@
   var dict = global.__I18N__ = global.__I18N__ || {};
   var current = DEFAULT_LOCALE;
 
-  // 路径 ↔ 语言映射：默认 zh-CN 走根路径，其他语言走 /xx/
+  // 路径 ↔ 语言映射：默认 en 走根路径，其他语言走 /xx/
   function pathFor(locale) {
     if (locale === DEFAULT_LOCALE) return '/';
     return '/' + locale + '/';

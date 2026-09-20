@@ -1,4 +1,4 @@
 # Cloudflare Pages 路径化多语言路由
-# 仅保留中英双语,客户端 JS 切换语言包
+# 默认英文走 /,中文走 /zh-CN/
 
-/en/*          /:splat           200
+/zh-CN/*       /:splat           200

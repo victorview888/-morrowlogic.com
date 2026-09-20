@@ -4,10 +4,10 @@
  */
 registerLocale('zh-CN', {
   'meta.title': '明日逻辑 · Morrow Logic — 多品牌站矩阵运营商',
-  'meta.description': '明日逻辑（Morrow Logic）是一家专注于垂直内容站点矩阵运营的科技公司，覆盖休闲游戏、AI 工具与热点内容领域，以专业的内容运营与多渠道变现能力，构建可持续增长的数字资产组合。',
+  'meta.description': '明日逻辑（Morrow Logic）— 多品牌站矩阵运营商，专注于休闲游戏、AI 工具与热点内容领域。广告合作 · 渠道代理 · 加入我们 → morrowlogic.com',
   'meta.keywords': '品牌站矩阵,内容运营,流量变现,休闲游戏,AI工具,热点内容,明日逻辑,Morrow Logic',
   'og.title': '明日逻辑 · Morrow Logic',
-  'og.description': '在多个垂直赛道，运营着自己的品牌站',
+  'og.description': '多品牌站矩阵运营商，专注于休闲游戏、AI 工具与热点内容领域。广告合作 / 渠道代理 / 加入我们 →',
   'twitter.title': '明日逻辑 · Morrow Logic',
 
   'a11y.skip': '跳转到主内容',

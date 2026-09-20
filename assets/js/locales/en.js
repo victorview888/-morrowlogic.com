@@ -4,10 +4,10 @@
  */
 registerLocale('en', {
   'meta.title': 'Morrow Logic — Multi-Brand Site Network Operator',
-  'meta.description': 'Morrow Logic operates a portfolio of vertical content sites across casual games, AI tools, and trending topics — building sustainable digital assets through professional content operations and multi-channel monetization.',
+  'meta.description': 'Morrow Logic — a multi-brand site network operator focused on casual games, AI tools, and trending content verticals. Brand partnerships, channel agencies, and careers — connect at morrowlogic.com',
   'meta.keywords': 'site network,content operations,monetization,casual games,AI tools,trending content,Morrow Logic',
   'og.title': 'Morrow Logic',
-  'og.description': 'We operate our own brand sites across multiple verticals',
+  'og.description': 'Multi-brand site network operator across casual games, AI tools, and trending content verticals. Partnerships welcome.',
   'twitter.title': 'Morrow Logic',
 
   'a11y.skip': 'Skip to main content',

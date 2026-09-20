@@ -97,7 +97,8 @@
       }
     });
     // 文档级 lang 与 meta
-    document.documentElement.setAttribute('lang', current.split('-')[0]);
+    // 使用 BCP 47 标签:zh-CN / en (完整 locale,有助于搜索引擎识别)
+    document.documentElement.setAttribute('lang', current);
     document.documentElement.setAttribute('data-locale', current);
 
     // hreflang 链接：路径化版本（SEO 友好）

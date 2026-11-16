@@ -43,7 +43,7 @@
         burger.classList.toggle('is-open', open);
         burger.setAttribute('aria-expanded', open ? 'true' : 'false');
       });
-      $$('a[href^="#"]', menu).forEach(function (a) {
+      $$('a', menu).forEach(function (a) {
         a.addEventListener('click', function () {
           menu.classList.remove('is-open');
           burger.classList.remove('is-open');
@@ -51,6 +51,13 @@
         });
       });
     }
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && burger && menu && menu.classList.contains('is-open')) {
+        menu.classList.remove('is-open'); burger.classList.remove('is-open');
+        burger.setAttribute('aria-expanded', 'false'); burger.focus();
+      }
+    });
 
     // 当前区块高亮
     var links = $$('.nav__menu a[href^="#"]');
@@ -86,6 +93,7 @@
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
     els.forEach(function (el) { io.observe(el); });
+    document.documentElement.classList.add('reveal-ready');
   }
 
   // ---- 数字计数 ----
@@ -137,9 +145,10 @@
   // ---- Hero Canvas 星链 ----
   function initHeroCanvas() {
     var c = $('[data-hero-canvas]');
-    if (!c || REDUCED) return;
+    if (!c || REDUCED || window.innerWidth < 600) return;
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var ctx = c.getContext('2d');
+    if (!ctx) return;
     var w, h, points = [];
     var POINT_COUNT = 60;
     var LINK_DIST = 140;
@@ -196,16 +205,26 @@
       rafId = requestAnimationFrame(step);
     }
     var rafId = 0;
-    if (window.innerWidth >= 600) {
-      resize();
-      step();
-      var ro;
-      if ('ResizeObserver' in window) {
-        ro = new ResizeObserver(resize);
-        ro.observe(c.parentElement);
-      } else {
-        window.addEventListener('resize', resize);
-      }
+    var visible = true;
+    var motion = matchMedia('(prefers-reduced-motion: reduce)');
+    function syncAnimation() {
+      var active = visible && !document.hidden && !motion.matches && window.innerWidth >= 600;
+      if (active && !rafId) step();
+      else if (!active && rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+    }
+    resize();
+    syncAnimation();
+    document.addEventListener('visibilitychange', syncAnimation);
+    motion.addEventListener('change', syncAnimation);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        visible = entries[0].isIntersecting; syncAnimation();
+      }).observe(c.parentElement);
+    }
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(function () { resize(); syncAnimation(); }).observe(c.parentElement);
+    } else {
+      window.addEventListener('resize', function () { resize(); syncAnimation(); });
     }
   }
 
@@ -218,7 +237,7 @@
         var t = document.querySelector(id);
         if (!t) return;
         e.preventDefault();
-        var top = t.getBoundingClientRect().top + window.scrollY - 60;
+        var top = t.getBoundingClientRect().top + window.scrollY - Math.ceil($('#nav').getBoundingClientRect().height) - 12;
         window.scrollTo({ top: top, behavior: REDUCED ? 'auto' : 'smooth' });
         history.replaceState(null, '', id);
       });
@@ -237,51 +256,68 @@
     });
   }
 
-  // ---- 表单（可配置端点，缺则降级 mailto） ----
+  // ---- Contact: distinguish email drafts from confirmed HTTP submissions ----
   function initForm() {
     var form = $('[data-form]');
     if (!form) return;
-    var ok = $('[data-form-ok]');
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      // 简易校验
-      var fields = $$('input, textarea, select', form);
+    var status = $('[data-form-status]', form);
+    var draft = $('[data-form-draft]', form);
+    var button = $('button[type="submit"]', form);
+    var busy = false;
+    function t(key) { return window.I18N.t(key); }
+    var endpoint = window.ML_FORM_ENDPOINT || '';
+    // Production submissions require HTTPS. Invalid configuration fails visibly.
+    var validEndpoint = !endpoint || /^https:\/\//i.test(endpoint);
+    button.textContent = t(endpoint ? 'contact.send' : 'contact.submit');
+    form.hidden = false;
+    function announce(key, error) {
+      status.setAttribute('role', error ? 'alert' : 'status');
+      status.classList.toggle('is-error', !!error);
+      status.textContent = t(key);
+      status.hidden = false;
+    }
+    $$('input, textarea', form).forEach(function (field) {
+      field.addEventListener('input', function () { field.setCustomValidity(''); });
+    });
+    form.addEventListener('input', function () { draft.hidden = true; status.hidden = true; });
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      if (busy) return;
       var data = {};
-      var bad = false;
-      fields.forEach(function (f) {
-        if (f.required && !String(f.value).trim()) { bad = true; f.style.borderColor = '#ff7a7a'; }
-        else { f.style.borderColor = ''; data[f.name] = f.value; }
+      $$('input, textarea, select', form).forEach(function (field) {
+        var value = field.value.trim();
+        field.setCustomValidity(field.required && !value ? t('contact.required') : '');
+        data[field.name] = value;
       });
-      if (bad) return;
-
-      // 若页面声明了 ml_form_endpoint，则走 fetch；否则 mailto 兜底
-      var endpoint = window.ML_FORM_ENDPOINT;
-      if (endpoint) {
-        fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        }).then(function (r) {
-          if (!r.ok) throw new Error(r.statusText);
-          form.reset();
-          if (ok) ok.hidden = false;
-        }).catch(function (err) {
-          alert('Submit failed: ' + err.message);
+      if (!form.reportValidity()) return;
+      status.hidden = true; draft.hidden = true;
+      if (!endpoint) {
+        var subject = '[Morrow Logic] ' + data.type + ' — ' + data.name;
+        var body = ['Name: ' + data.name, 'Company: ' + data.company,
+          'Email: ' + data.email, 'Phone: ' + data.phone, 'Type: ' + data.type, '', data.message].join('\n');
+        draft.href = 'mailto:business@morrowlogic.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        draft.hidden = false;
+        announce('contact.draft', false);
+        return;
+      }
+      if (!validEndpoint) { announce('contact.error', true); return; }
+      busy = true; button.disabled = true; form.setAttribute('aria-busy', 'true');
+      button.textContent = t('contact.sending');
+      var controller = new AbortController();
+      var timer = setTimeout(function () { controller.abort(); }, 15000);
+      try {
+        var response = await fetch(endpoint, {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(data), signal: controller.signal, credentials: 'omit', redirect: 'error'
         });
-      } else {
-        var subject = encodeURIComponent('[Morrow Logic] Inquiry from ' + (data.name || 'Website'));
-        var body = encodeURIComponent(
-          'Name: ' + (data.name || '') + '\n' +
-          'Company: ' + (data.company || '') + '\n' +
-          'Email: ' + (data.email || '') + '\n' +
-          'Phone: ' + (data.phone || '') + '\n' +
-          'Type: ' + (data.type || '') + '\n\n' +
-          (data.message || '')
-        );
-        // 兜底：弹邮件草稿
-        var mail = 'mailto:business@morrowlogic.com?subject=' + subject + '&body=' + body;
-        window.location.href = mail;
-        if (ok) ok.hidden = false;
+        if (!response.ok) throw new Error('Submission rejected');
+        form.reset();
+        announce('contact.ok', false);
+      } catch (error) {
+        announce('contact.error', true);
+      } finally {
+        clearTimeout(timer); busy = false; button.disabled = false;
+        form.removeAttribute('aria-busy'); button.textContent = t('contact.send');
       }
     });
   }

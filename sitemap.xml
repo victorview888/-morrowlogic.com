@@ -1,27 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  <url>
-    <loc>https://morrowlogic.com/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en"    href="https://morrowlogic.com/"/>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://morrowlogic.com/zh-CN/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://morrowlogic.com/"/>
-  </url>
-  <url>
-    <loc>https://morrowlogic.com/zh-CN/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en"    href="https://morrowlogic.com/"/>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://morrowlogic.com/zh-CN/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://morrowlogic.com/"/>
-  </url>
-  <url>
-    <loc>https://morrowlogic.com/pages/privacy.html</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-    <xhtml:link rel="alternate" hreflang="en"    href="https://morrowlogic.com/pages/privacy.html"/>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://morrowlogic.com/zh-CN/pages/privacy.html"/>
-  </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url><loc>https://morrowlogic.com/</loc><xhtml:link rel="alternate" hreflang="en" href="https://morrowlogic.com/"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://morrowlogic.com/zh-CN/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://morrowlogic.com/"/></url>
+  <url><loc>https://morrowlogic.com/zh-CN/</loc><xhtml:link rel="alternate" hreflang="en" href="https://morrowlogic.com/"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://morrowlogic.com/zh-CN/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://morrowlogic.com/"/></url>
+  <url><loc>https://morrowlogic.com/pages/privacy</loc><xhtml:link rel="alternate" hreflang="en" href="https://morrowlogic.com/pages/privacy"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://morrowlogic.com/zh-CN/pages/privacy"/><xhtml:link rel="alternate" hreflang="x-default" href="https://morrowlogic.com/pages/privacy"/></url>
+  <url><loc>https://morrowlogic.com/zh-CN/pages/privacy</loc><xhtml:link rel="alternate" hreflang="en" href="https://morrowlogic.com/pages/privacy"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://morrowlogic.com/zh-CN/pages/privacy"/><xhtml:link rel="alternate" hreflang="x-default" href="https://morrowlogic.com/pages/privacy"/></url>
 </urlset>

@@ -1,4 +1,5 @@
-# Cloudflare Pages 路径化多语言路由
-# 默认英文走 /,中文走 /zh-CN/
-
-/zh-CN/*       /:splat           200
+# Both languages now have real, crawlable static files.
+# Normalize legacy explicit English paths to the default English site.
+/en/ / 301
+/en/* /:splat 301
+/pages/_template.html / 301

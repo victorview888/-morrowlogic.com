@@ -18,7 +18,7 @@
   /* 文字 */
   --text:#e8edff;
   --text-soft:#b9c2e0;
-  --text-mute:#7a85ad;
+  --text-mute:#9aa6cc;
 
   /* 主色与高亮（蓝→青→紫 渐变体系） */
   --brand-1:#4f8dff;
@@ -62,7 +62,8 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
-html.i18n-loading body{visibility:hidden}
+[hidden]{display:none!important}
+[id]{scroll-margin-top:90px}
 body{
   margin:0;
   font-family:var(--font);
@@ -122,8 +123,9 @@ ul,ol{margin:0;padding:0;list-style:none}
 
 /* 通用工具类 */
 .full{grid-column:1/-1}
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
-.reveal.is-in{opacity:1;transform:none}
+.reveal{opacity:1;transform:none}
+.reveal-ready .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal-ready .reveal.is-in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){
-  .reveal{opacity:1;transform:none;transition:none}
+  .reveal-ready .reveal{opacity:1;transform:none;transition:none}
 }

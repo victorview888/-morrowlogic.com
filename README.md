@@ -1,134 +1,73 @@
-# Morrow Logic · 明日逻辑 品牌站
+# Morrow Logic · 明日逻辑
 
-纯静态、零依赖、6 国语言、形象专业型品牌官网。围绕“计算机软件开发 / 系统集成 / 数据处理服务”三大业务展开。
+中英双语静态品牌站，介绍休闲游戏、AI 工具与热点内容站点的建设和运营。生产页面没有 JavaScript 运行时依赖；开发阶段使用 parse5 生成 HTML、Playwright 验证浏览器行为。
 
-## 目录结构
+## 本地开发
 
-```
-.
-├── index.html                       主入口（单页长滚动 + 预留扩展）
-├── pages/
-│   ├── _template.html               子页模板（共用头尾/i18n/样式）
-│   └── privacy.html                 隐私政策示例
-├── assets/
-│   ├── css/
-│   │   ├── base.css                 设计令牌、reset、排版、无障碍
-│   │   ├── components.css           按钮、卡片、导航、语言切换、页脚
-│   │   └── sections.css             各 section 布局、Hero 背景、响应式
-│   ├── js/
-│   │   ├── i18n.js                  多语言引擎（兼容 file:// 直开）
-│   │   ├── main.js                  交互（导航/计数/Canvas/表单/返回顶部）
-│   │   └── locales/
-│   │       ├── zh-CN.js             简体中文
-│   │       ├── en.js                English
-│   │       ├── ja.js                日本語
-│   │       ├── zh-TW.js             繁體中文
-│   │       ├── es.js                Español
-│   │       └── de.js                Deutsch
-│   └── img/
-│       ├── logo-mark.svg            单色标志
-│       ├── logo-full.svg            完整标志（含文字）
-│       ├── favicon.svg              浏览器图标
-│       └── og-image.svg             社交分享卡
-├── robots.txt
-└── sitemap.xml
-```
-
-## 快速预览
-
-无需构建，直接起一个静态服务：
+需要 Node.js 22 或更新版本。
 
 ```bash
-# 任选其一
-python -m http.server 8080
-npx serve .
-# 或直接在浏览器打开 index.html
+npm ci
+npm run build
+npm start
 ```
 
-## 国际化（i18n）
+开发服务默认使用 8080 端口；可用 `PORT=8081 npm start` 指定端口。必须使用 HTTP 服务预览，不能直接以 `file://` 打开。
 
-- 默认语言：**简体中文**（`zh-CN`）。
-- 顺序：用户上次选择 → URL `?lang=xx` → 浏览器语言 → 默认。
-- 切换状态保存在 `localStorage.ml_lang`。
-- URL 会同步追加 `?lang=xx`，便于分享与 SEO。
+- 英文首页：`/`
+- 中文首页：`/zh-CN/`
+- 英文隐私政策：`/pages/privacy`
+- 中文隐私政策：`/zh-CN/pages/privacy`
 
-### 新增/修改语言
+URL 决定语言，不被浏览器语言或旧 localStorage 偏好覆盖。语言切换保留当前页面、查询参数和锚点，浏览器前进、后退、刷新均使用实际静态文件。关闭 JavaScript 后正文、邮箱与语言链接仍可使用。
 
-1. 复制 `assets/js/locales/en.js` 为 `xx.js`，逐条翻译。
-2. 在 `i18n.js` 的 `SUPPORTED` 数组追加 `xx`。
-3. 在 `SUPPORTED_NAMES` 补充本地化显示名。
-4. 在 `index.html` 头部 `<link rel="alternate" hreflang="...">` 与语言下拉 `[data-lang-option]` 中加上。
-5. （可选）在 `sitemap.xml` 同步 `xhtml:link`。
+## 修改内容
 
-> 校验脚本：`node -e "/* 见仓库根 README 末尾 */"`。
+- 页面结构：`templates/index.html`、`templates/privacy.html`
+- 中英文案：`assets/js/locales/zh-CN.js`、`assets/js/locales/en.js`
+- 样式：`assets/css/`
+- 交互：`assets/js/main.js`、`assets/js/i18n.js`
+- 表单公开配置：`assets/js/config.js`
 
-## 内容自定义（占位 → 真实）
+修改后执行 `npm run build`。生成的 `index.html`、`pages/privacy.html`、`zh-CN/` 和 `sitemap.xml` **一起提交**，不要直接编辑生成页面。生成过程校验页面引用的翻译键，并更新页面标题、描述、canonical、hreflang、OG URL、结构化数据和资源内容版本号。
 
-文案修改原则：**只改语言包，不改 HTML**。所有可见文字均通过 `data-i18n="key"` 标注，对应每个语言包里的 key。
+只公布可核验的信息。当前已去除占位地址、备案号、未经核实的用户量和合作方标识；AI 工具和热点内容标为内容方向，不作为已有客户案例。现有邮箱与 QuickWebGames 链接沿用原仓库信息，其归属及接收能力需由运营方确认。补充真实案例时，应注明统计口径、时间及可验证链接。
 
-需要替换的占位：
+## 联系表单
 
-| 占位 | 在哪 |
-| --- | --- |
-| 公司全称 | 各 locale `footer.slogan`、`<title>`、`meta.*` |
-| 业务数据 | `stats.s*`、首页 Stats 节点 `data-count` |
-| 客户案例 | `cases.c1/c2/c3.*` |
-| 联系方式 | `contact.l*` 与 HTML `<a href>` 中的邮箱/电话 |
-| ICP 备案号 | `footer.icp` |
-| Logo / OG 图 | `assets/img/*.svg`（导出 PNG 建议 2x 尺寸） |
+默认 `window.ML_FORM_ENDPOINT = ''`：只生成邮件草稿，访客需要点击链接并在邮件客户端发送，网站不会声称服务端已收到消息。邮箱链接始终可用；公司和电话选填。
 
-## 表单接入
+如有已配置的表单处理服务，在 `assets/js/config.js` 中填写其**公开 HTTPS 接收地址**，然后重新生成页面。端点需要接受 JSON POST、允许网站来源的 CORS，并仅在接受提交后返回 2xx。字段为 `name`、`company`、`email`、`phone`、`type`、`message`。
 
-`main.js` 默认走 `mailto:` 兜底（不会丢线索）。
+接入后，前端提供发送状态、重复提交保护、15 秒超时及失败反馈，失败时保留输入。API 密钥必须保存在服务端，不能放在配置文件中。启用前请配置接收方、限流和反垃圾措施，并核对隐私政策；用真实测试咨询验证通知实际送达。自动化测试使用模拟端点，不代表邮件送达已验证。
 
-如需对接服务端：
+## 验证
 
-```html
-<script>window.ML_FORM_ENDPOINT = 'https://formspree.io/f/xxxxxx';</script>
+```bash
+npx playwright install chromium
+npm test
+# 启动本地服务后：
+npm run smoke
+# 对部署后的站点做只读检查：
+npm run smoke -- https://morrowlogic.com
 ```
 
-即可启用 JSON POST 提交（endpoint 需支持 CORS）。
+如机器已有兼容 Chromium，可使用 `CHROMIUM_PATH=/usr/bin/chromium npm test`。受限云环境可为 npm 指定可写缓存：`npm ci --cache /tmp/morrow-npm-cache`。
 
-## 部署
+测试覆盖四个页面的静态翻译、页面元数据、内部链接和锚点，以及手机/平板/桌面布局、键盘操作、无脚本阅读、语言切换、表单校验、草稿模式及模拟提交成功和失败。真实线上性能需另行测量，可参考 LCP ≤ 2.5 秒、INP ≤ 200 毫秒、CLS ≤ 0.1 的目标；本地功能通过不代表已达到这些指标。
 
-### 通用静态主机（任意）
-把仓库内容上传到 宝塔 / OSS / S3 / Nginx 即可，无需构建。
+## Cloudflare Pages
 
-### Cloudflare Pages
-- 直接连接 Git 仓库或上传 dist。
-- 默认根目录：仓库根。
-- 无构建命令。
+保持已有 Git 连接：仓库 `victorview888/-morrowlogic.com`，生产分支 `main`。由于生成页面随代码提交，现有“构建命令为空、发布仓库根目录”的模式仍然可用。无需新增 GitHub Actions 部署密钥或 Wrangler。
 
-### Vercel
-- Framework Preset: **Other**。
-- Build Command / Output: 留空。
+`.github/workflows/check.yml` 只运行检查，不负责发布。建议为 `main` 设置必须通过检查的分支规则；Cloudflare 原生 Git 部署与 GitHub 检查可能并行执行。
 
-## 性能与无障碍
+部署前后核对：
 
-- 无外部依赖、首屏仅 ~25KB CSS + ~6KB JS（未压缩）。
-- `prefers-reduced-motion` 全面降级。
-- 键盘可达：跳过链接、`:focus-visible`、语言切换支持方向键与回车。
-- 颜色对比 AA+。
+1. Workers & Pages 中的 Git 连接、生产分支和自动部署开关仍有效。
+2. 最近一次成功部署的提交 SHA 与目标提交一致。
+3. `morrowlogic.com` 自定义域名为 Active，HTTPS 正常。
+4. 对生产地址运行上面的 smoke 命令，再验证语言切换及关键交互。
+5. 失败时在 Pages 部署记录中回滚到已确认的成功版本。
 
-## 多页扩展
-
-1. 复制 `pages/_template.html` 为 `pages/<name>.html`。
-2. 把 `#INCLUDE-HEAD` / `#INCLUDE-FOOT` 注释替换为对应的 `<link>` 与 `<script>` 引入（用相对路径 `../assets/...`）。
-3. 在 `<main>` 内写正文，复用 `data-i18n` 系统（任意 key，可在不同页面用不同 key）。
-4. 在 `index.html` 头部 `nav__menu` 增加入口链接。
-
-## 自定义视觉
-
-主要令牌在 `assets/css/base.css` 顶部 `:root{}`，改一处即全站生效：
-
-```css
---brand-1:#4f8dff;   /* 主色 */
---brand-2:#22e3c4;   /* 高光 */
---brand-3:#8b5cf6;   /* 强调 */
---grad-1:...         /* 主按钮渐变 */
---grad-text:...      /* 渐变文字 */
-```
-
-## License
-
-MIT
+固定文件名资源使用重新验证缓存，HTML 引用同时附带内容版本号，避免此前一年 immutable 缓存的旧资源继续被复用。外部托管平台的实际缓存响应头、Git 连接和部署状态需要在发布后验证。

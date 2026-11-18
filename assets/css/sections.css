@@ -166,7 +166,7 @@
 .tech__list li:hover{color:#fff;border-color:rgba(34,227,196,.4);background:rgba(34,227,196,.08)}
 
 /* ---- CASES ---- */
-.cases__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.cases__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 .case{
   padding:28px;border-radius:var(--r-lg);
   background:

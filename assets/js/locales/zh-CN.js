@@ -53,6 +53,7 @@ registerLocale("zh-CN", {
   "proc.p5.d": "广告、联盟、自营多渠道转化。",
   "cases.eyebrow": "Sites & Focus Areas · 站点与内容方向",
   "cases.title": "了解我们的站点与内容方向",
+  "cases.brandSite": "品牌网站",
   "cases.c1.t": "QuickWebGames",
   "cases.c1.d": "通过 QuickWebGames 浏览休闲、益智与网页小游戏。",
   "cases.c1.tag1": "休闲游戏",

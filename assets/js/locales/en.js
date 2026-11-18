@@ -53,6 +53,7 @@ registerLocale("en", {
   "proc.p5.d": "Convert via ads, affiliate, and owned commerce.",
   "cases.eyebrow": "Sites & Focus Areas",
   "cases.title": "Explore our site and content directions",
+  "cases.brandSite": "Brand website",
   "cases.c1.t": "QuickWebGames",
   "cases.c1.d": "Browse casual, puzzle, and browser games on QuickWebGames.",
   "cases.c1.tag1": "Casual Games",
